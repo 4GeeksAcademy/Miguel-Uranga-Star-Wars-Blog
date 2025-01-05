@@ -1,0 +1,48 @@
+body{
+    background-color: rgb(117, 94, 94);
+}
+
+nav{
+    background-color: rgb(2, 1, 1);
+}
+
+.card{
+    background-color: rgb(2, 1, 1);
+}
+
+
+/* The side navigation menu */
+.sidebar {
+    margin-right: 10vw;
+    margin-left: 5vw;
+    padding-top: 5vh;
+    width: 200px;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+  }
+  
+  /* Sidebar links */
+  .sidebar .options {
+    display: block;
+    color: black;
+    font-weight: bold;
+    padding: 16px;
+    font-size: 20px;
+    text-decoration: none;
+  }
+  
+  /* Active/current link */
+  .sidebar .options.active {
+    background-color: #04AA6D;
+    color: white;
+  }
+  
+  /* Links on mouse-over */
+  .sidebar .options:hover:not(.active) {
+    border-left-style: solid;
+    border-width: 10px;
+    color: gray;
+    border-color: red;
+  }
+  
