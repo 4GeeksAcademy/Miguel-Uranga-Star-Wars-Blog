@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export const SideBar = () => {
     return (
         <div className="container-fluid p-0">
-            <div className="sidebar">
+            <div className="sidebar border-end border-dark">
                 <label className="text-dark">Browse categories</label>
                 <Link className="options" to="dashboard/characters">Characters</Link>
                 <Link className="options" to="dashboard/planets">Planets</Link>

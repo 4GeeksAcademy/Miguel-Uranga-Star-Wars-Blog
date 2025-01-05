@@ -1,18 +1,14 @@
 import React, {useContext} from "react";
 import { Context } from "../store/appContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 
 
 export const DataCards = props => {
     const  {store, actions}  = useContext(Context);
 
-    // const setDetails = async () =>{
-    //     await actions.setItemCheck(props.item);
-    // }
-
     return (
         <div className="ms-5 container-fluid d-flex flex-wrap">
-        <div className="container-fluid" style={{"margin-left":"10vw", "margin-top":"2vh"}}>
+        <div className="container-fluid" style={{"margin-left":"15vw", "margin-top":"2vh"}}>
                 <ul className="d-flex flex-wrap">
                     { store[props.item] ? store[props.item].map((item, index) => {
                     return (
@@ -28,7 +24,7 @@ export const DataCards = props => {
                                     
                                 </div>
                                 <div className="card-footer mb-4">
-                                    <Link className="card-text text-danger fs-5" to= {item.name} >Details</Link>
+                                    <Link className="card-text text-danger fs-5" to={"/dashboard/"+ props.item+ "/"+ item.name}>Details</Link>
                                 </div>
                             </div>
                             {/* <div className="d-flex mt-3">

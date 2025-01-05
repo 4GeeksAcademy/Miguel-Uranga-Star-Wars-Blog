@@ -4,7 +4,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			characters: [],
 			vehicles: [],
 			planets: [],
-			pathDetails: "",
+			itemDetails: [],
+			description: "",
 			demo: [
 				{
 					title: "FIRST",
@@ -88,8 +89,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return -1
 					}
 
-					//console.log(data.results)
+					console.log(data.results)
 					await setStore({vehicles: data.results})
+					//console.log(getStore().vehicles)
 
 					const dataLocalized = JSON.stringify(getStore().vehicles)
 
@@ -111,53 +113,52 @@ const getState = ({ getStore, getActions, setStore }) => {
 				await setStore({planets: JSON.parse(localStorage.getItem("storePlanets"))})
 				await setStore({vehicles: JSON.parse(localStorage.getItem("storeVehicles"))})
 			},
-			setItemCheck: async (classification) => {
-				await setStore({pathDetails: classification})
-			},
-			itemExists: async (itemToCheck) => {
-				if(!localStorage.storeCharacters){
-					if(itemToCheck in getStore().characters){
-						await setStore({pathDetails: "characters"})
-						return "characters"
-					}
+			setItemCheck: async (itemType, itemName) => {
+				let foundItem = {}
+				if (!localStorage){
+					
 				}
-				else {
-					if(localStorage.storeCharacters.includes(itemToCheck)) {
-						await setStore({pathDetails: "characters"})
-						return "characters"
+				else{
+					itemType == "characters" ? 
+					itemType = "storeCharacters": itemType == "vehicles" ? 
+					itemType = "storeVehicles": itemType == "planets" ? 
+					itemType = "storePlanets": console.log("Not found!") 
+					const itemContents = JSON.parse(localStorage.getItem(itemType))
+					
+					//console.log(itemContents[0])
+					
+					if (itemContents){
+						itemContents.map((item, index) => {
+							if (itemName == item.name){
+								foundItem = itemContents[index]
+								return -1
+							}
+						})
 					}
-				}
 
+					if(!foundItem){
+						console.log("Not found!")
+						return -1
+					}
 
-				if(!localStorage.storePlanets){
-					if(itemToCheck in getStore().planets){
-						await setStore({pathDetails: "planets"})
-						return "planets"
-					}
-				}
-				else {
-					if(localStorage.storePlanets.includes(itemToCheck)) {
-						await setStore({pathDetails: "planets"})
-						return "planets"
-					}
-				}
+					const response = await fetch(foundItem.url)
+					
+					const data = await response.json()
 
-				if(!localStorage.storeVehicles){
-					if(itemToCheck in getStore().vehicles){
-						await setStore({pathDetails: "vehicles"})
-						return "vehicles"
+					console.log(data)
+					if(!data){
+						return -1
 					}
-				}
-				else {
-					if(localStorage.storeVehicles.includes(itemToCheck)) {
-						await setStore({pathDetails: "vehicles"})
-						return "vehicles"
-					}
-				}
 
-				return -1
+					//console.log(data.results)
+					await setStore({description: data.result.description})
+					await setStore({itemDetails: data.result.properties})
+					
+					console.log(getStore().itemDetails)
+					
+				}
 				
-			}
+			},
 		}
 	};
 };
