@@ -6,6 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			planets: [],
 			itemDetails: [],
 			description: "",
+			favorites: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -21,9 +22,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 			getCharacters: async () => {
 				/**
 					fetch().then().then(data => setStore([ "foo": data.bar }))
@@ -116,7 +114,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setItemCheck: async (itemType, itemName) => {
 				let foundItem = {}
 				if (!localStorage){
+					let itemToCheck = {}
+					itemType == "characters" ? 
+					itemToCheck = getStore().characters: itemType == "vehicles" ? 
+					itemToCheck = getStore().vehicles: itemType == "planets" ? 
+					itemToCheck = getStore().planets: console.log("Not found!") 
 					
+					if (itemToCheck){
+						itemToCheck.map((item, index) => {
+							if (itemName == item.name){
+								foundItem = itemToCheck[index]
+								return -1
+							}
+						})
+					}
+					if(!foundItem){
+						console.log("Not found!")
+						return -1
+					}
+
+					getActions().fetchingFoundItem(foundItem)
+
+
 				}
 				else{
 					itemType == "characters" ? 
@@ -140,12 +159,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log("Not found!")
 						return -1
 					}
-
-					const response = await fetch(foundItem.url)
+					getActions().fetchingFoundItem(foundItem)
+				}
+				
+			},
+			fetchingFoundItem: async(foundItem) =>{
+				const response = await fetch(foundItem.url)
 					
 					const data = await response.json()
 
-					console.log(data)
+					//console.log(data)
 					if(!data){
 						return -1
 					}
@@ -154,11 +177,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 					await setStore({description: data.result.description})
 					await setStore({itemDetails: data.result.properties})
 					
-					console.log(getStore().itemDetails)
+					//console.log(getStore().itemDetails)
+			},
+			addItemToFavorites: async (name, itemType) =>{
+				let foundItem = {}
+				let typeChange = itemType
+				if (!localStorage){
+					let itemToCheck = {}
+					itemType == "characters" ? 
+					itemToCheck = getStore().characters: itemType == "vehicles" ? 
+					itemToCheck = getStore().vehicles: itemType == "planets" ? 
+					itemToCheck = getStore().planets: console.log("Not found!") 
 					
+					if (itemToCheck){
+						itemToCheck.map((item, index) => {
+							if (name == item.name){
+								itemToCheck[index].type = itemType
+								foundItem = itemToCheck[index]
+								return -1
+							}
+						})
+						await setStore({favorites: foundItem})
+					}
+
+					//console.log(getStore())
+
+					if(!foundItem){
+						console.log("Not found!")
+						return -1
+					}
+				}
+				else{
+					itemType == "characters" ? 
+					typeChange = "storeCharacters": itemType == "vehicles" ? 
+					typeChange = "storeVehicles": itemType == "planets" ? 
+					typeChange = "storePlanets": console.log("Not found!") 
+					const itemContents = JSON.parse(localStorage.getItem(typeChange))
+					//console.log(itemContents[0])
+					
+					if (itemContents){
+						itemContents.map((item, index) => {
+							if (name == item.name){
+								itemContents[index].type = itemType
+								//console.log(itemContents[index])
+								foundItem = itemContents[index]
+								
+								return -1
+							}
+						})
+						const newArray = [...getStore().favorites]
+						newArray.push(foundItem)
+						await setStore({favorites: newArray})
+						//console.log(getStore().favorites)
+					}
+
+					//console.log(getStore().favorites)
+
+					if(!foundItem){
+						console.log("Not found!")
+						return -1
+					}
+
 				}
 				
 			},
+			deletingItem: async(index) =>{
+				let newArray = [...getStore().favorites]
+				newArray.splice(index, 1)
+				//console.log(newArray)
+				await setStore({favorites: newArray})
+				
+			}
 		}
 	};
 };
